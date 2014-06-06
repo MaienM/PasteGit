@@ -1,0 +1,7 @@
+repodir = 'repos'
+
+def apply(app):
+    """
+    Apply settings on the app object.
+    """
+    app.secret_key = '@\xb3\xd4\x8d\x00\x10#7\x95&\x1f\x1a\xdb)\xf8[\x8f\xe0\x0c\xfc"g\x89\x03\\>\xc49\x1d\x9f#dYI\xe3\xae\xb9\xb1\xd1\xac'
