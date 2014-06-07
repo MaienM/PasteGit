@@ -22,7 +22,10 @@
 					{% block menu %}
 						{% if session.user %}
 							<li {% if active_page == 'new' %}class="active"{% endif %}><a href="/new">New Paste</a></li>
-							<li {% if active_page == 'list' %}class="active"{% endif %}><a href="/list">List Pastes</a></li>
+						{% endif %}
+						<li {% if active_page == 'list' %}class="active"{% endif %}><a href="/list">List Pastes</a></li>
+						{% if session.user %}
+							<li {% if active_page == 'new' %}class="active"{% endif %}><a href="/new">New Paste</a></li>
 							<li><a href="/logout">Logout</a></li>
 						{% else %}
 							<li><a href="/login">Login</a></li>
@@ -33,7 +36,7 @@
 		</div>
 	</div>
 	{% block subnavbar %}
-		{% if rid is defined %}
+		{% if repo_owner %}
 			<div class="navbar navbar-inverse navbar-fixed-top navbar-secondary" role="navigation">
 				<div class="container">
 					<div class="navbar-header">

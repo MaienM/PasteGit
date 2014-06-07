@@ -2,6 +2,7 @@
 
 import os
 import settings
+import logging
 
 from flask import Flask
 from flask_bootstrap import Bootstrap
@@ -28,7 +29,14 @@ app.route('/logout')(auth.logout)
 app.route('/callback')(auth.callback)
 app.route('/test')(auth.test)
 
-if __name__ == '__main__':
-    os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
-    app.run('0.0.0.0', debug=True)
+# We don't have an SSL certificate yet.
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
+# Logging.
+handler = logging.FileHandler('/var/www/pastegit/log')
+handler.setLevel(logging.WARNING)
+app.logger.addHandler(handler)
+
+# Run with the built-in server if ran directly.
+if __name__ == '__main__':
+    app.run('0.0.0.0', debug=True)

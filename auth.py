@@ -15,6 +15,12 @@ def _p(key):
 def login():
     if request.args.get('provider', '') in OAUTH_PROVIDERS:
         return login_perform()
+    elif request.args.get('provider', '') == 'test':
+        session['user'] = {
+            'email': 'test@example.com',
+            'name': 'Anonymous',
+        }
+        return redirect(url_for('index'))
     else:
         return login_pickprovider()
 

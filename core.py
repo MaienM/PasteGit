@@ -13,6 +13,9 @@ def index():
     return render_template('index.html')
 
 def new():
+    if 'user' not in session:
+        return render_template('error', error='You need to be logged in to do that.')
+
     if request.method == 'GET':
         return render_template('edit.html', title='New Paste', message='Initial version', new=True, languages=LANGUAGES)
     else:
@@ -27,6 +30,13 @@ def new():
         # Create a new repo.
         directory = os.path.join(settings.REPODIR, str(rid))
         repo = Repo.init(directory)
+
+        # Set owner.
+        cw = repo.config_writer('repository')
+        cw.add_section('user')
+        cw.set('user', 'name', session['user']['name'])
+        cw.set('user', 'email', session['user']['email'])
+        cw.write()
         
         # Write the title to a file.
         with open(os.path.join(directory, 'title'), 'w') as f:
@@ -48,7 +58,7 @@ def new():
 def list():
     return render_template('list.html')
 
-@route_auto_repo
+@route_fetch_repo
 def view(rid, repo, rev='HEAD'):
     directory = repo.working_dir
     mainfile = get_repo_files(repo)[0]
@@ -59,21 +69,22 @@ def view(rid, repo, rev='HEAD'):
     if 'renderer' in lang:
         content = lang['renderer'](content)
     
-    return render_template('view/{}.html'.format(lang['view']), title=title, content=content, rid=rid)
+    return render_template('view/{}.html'.format(lang['view']), title=title, content=content, rid=rid, repo_owner=we_repo_owner(repo))
 
-@route_auto_repo
+@route_fetch_repo
+@require_repo_owner
 def edit(rid, repo):
     directory = repo.working_dir
     mainfile = get_repo_files(repo)[0]
     if request.method == 'GET':
         title = read_file(os.path.join(directory, 'title'))
         content = read_file(os.path.join(directory, mainfile))
-        return render_template('edit.html', title=title, content=content, rid=rid)
+        return render_template('edit.html', title=title, content=content, rid=rid, repo_owner=we_repo_owner(repo))
     else:
         # Check that all required fields are present.
         if not set(('message', 'content')).issubset(set(request.form.keys())):
             flash('Please fill in all fields', 'warning')
-            return render_template('edit.html', rid=rid, **request.form)
+            return render_template('edit.html', rid=rid, repo_owner=we_repo_owner(repo), **request.form)
 
         # Write the paste to a file.
         with open(os.path.join(directory, mainfile), 'w') as f:
@@ -87,13 +98,14 @@ def edit(rid, repo):
         # View the paste.
         return redirect(url_for('view', rid=rid))
 
-@route_auto_repo
+@route_fetch_repo
+@require_repo_owner
 def delete(rid, repo):
     if request.method == 'GET':
         mainfile = get_repo_files(repo)[0]
         directory = repo.working_dir
         title = read_file(os.path.join(directory, 'title'))
-        return render_template('delete.html', title=title, rid=rid)
+        return render_template('delete.html', title=title, rid=rid, repo_owner=we_repo_owner(repo))
     else:
         # Rename the directory.
         directory = repo.working_dir

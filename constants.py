@@ -6,12 +6,12 @@ import settings
 LANGUAGES = {
     'python': {
         'name': 'Python',
-        'extentions': ('.py',),
+        'extensions': ('.py',),
         'view': 'code',
     },
     'markdown': {
         'name': 'Markdown',
-        'extentions': ('.md', '.markdown'),
+        'extensions': ('.md', '.markdown'),
         'view': 'markdown',
         'renderer': markdown.markdown,
     }
