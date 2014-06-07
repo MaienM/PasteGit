@@ -28,8 +28,9 @@ def new():
         rid = max([int(f) for f in os.listdir(settings.REPODIR)] + [0]) + 1
 
         # Create a new repo.
-        directory = os.path.join(settings.REPODIR, str(rid))
-        repo = Repo.init(directory)
+        repo = PasteRepo.init(rid)
+        repo.language = LANGUAGES[request.form['language']]
+        repo.mainfile = 'main' + repo.language['extensions'][0]
 
         # Set owner.
         cw = repo.config_writer('repository')
@@ -37,81 +38,63 @@ def new():
         cw.set('user', 'name', session['user']['name'])
         cw.set('user', 'email', session['user']['email'])
         cw.write()
+
+        # Commit.
+        repo.update(request.form['message'], request.form['title'], request.form['content'])
         
-        # Write the title to a file.
-        with open(os.path.join(directory, 'title'), 'w') as f:
-            f.write(request.form['title'])
-
-        # Write the paste to a file.
-        mainfile = 'main' + LANGUAGES[request.form['language']]['extensions'][0]
-        with open(os.path.join(directory, mainfile), 'w') as f:
-            f.write(request.form['content'])
-
-        # Commit the file.
-        repo.index.add(['title', mainfile])
-        repo.index.write()
-        repo.index.commit(request.form['message'])
-
         # View the paste.
         return redirect(url_for('view', rid=rid))
 
 def list():
-    ids = sorted([dirname for dirname in os.listdir(settings.REPODIR) if not dirname.endswith('.deleted')], key=int)
-    repos = [{'id': dirname, 'title': read_file(os.path.join(settings.REPODIR, dirname, 'title'))} for dirname in ids]
+    repos = []
+    for dirname in os.listdir(settings.REPODIR):
+        if dirname.endswith('.deleted'):
+            continue
+        try:
+            with open(os.path.join(settings.REPODIR, dirname, 'title'), 'r') as f:
+                repos.append({
+                    'id': int(dirname),
+                    'title': f.read(),
+                })
+        except:
+            pass
+    repos.sort(key=lambda x: x['id'])
     return render_template('list.html', repos=repos)
 
-@route_fetch_repo
-def view(rid, repo, rev='HEAD'):
-    directory = repo.working_dir
-    mainfile = get_repo_files(repo)[0]
-    title = read_file(os.path.join(directory, 'title'))
-    content = read_file(os.path.join(directory, mainfile))
-    lang = detect_language(mainfile)
-
-    if 'renderer' in lang:
-        content = lang['renderer'](content)
+@fetch_repo
+def view(repo, rev='HEAD'):
+    content = repo.get_content()
+    if 'renderer' in repo.language:
+        content = repo.language['renderer'](content)
     
-    return render_template('view/{}.html'.format(lang['view']), title=title, content=content, rid=rid, repo_owner=we_repo_owner(repo))
+    return render_template('view/{}.html'.format(repo.language['view']), content=content, repo=repo)
 
-@route_fetch_repo
+@fetch_repo
 @require_repo_owner
-def edit(rid, repo):
-    directory = repo.working_dir
-    mainfile = get_repo_files(repo)[0]
+def edit(repo):
     if request.method == 'GET':
-        title = read_file(os.path.join(directory, 'title'))
-        content = read_file(os.path.join(directory, mainfile))
-        return render_template('edit.html', title=title, content=content, rid=rid, repo_owner=we_repo_owner(repo))
+        return render_template('edit.html', repo=repo)
     else:
         # Check that all required fields are present.
         if not set(('message', 'content')).issubset(set(request.form.keys())):
             flash('Please fill in all fields', 'warning')
-            return render_template('edit.html', rid=rid, repo_owner=we_repo_owner(repo), **request.form)
+            return render_template('edit.html', repo=repo, **request.form)
 
-        # Write the paste to a file.
-        with open(os.path.join(directory, mainfile), 'w') as f:
-            f.write(request.form['content'])
-
-        # Commit the file.
-        repo.index.add([mainfile])
-        repo.index.write()
-        repo.index.commit(request.form['message'])
+        # Commit.
+        repo.update(request.form['message'], repo.get_title(), request.form['content'])
 
         # View the paste.
         return redirect(url_for('view', rid=rid))
 
-@route_fetch_repo
+@fetch_repo
 @require_repo_owner
-def delete(rid, repo):
+def delete(repo):
     if request.method == 'GET':
-        mainfile = get_repo_files(repo)[0]
-        directory = repo.working_dir
-        title = read_file(os.path.join(directory, 'title'))
-        return render_template('delete.html', title=title, rid=rid, repo_owner=we_repo_owner(repo))
+        return render_template('delete.html', repo=repo)
     else:
         # Rename the directory.
         directory = repo.working_dir
         os.rename(directory, directory.rstrip('/\\') + '.deleted')
 
         # Go to the main page.
-        return redirect(url_for('new'))
+        return redirect(url_for('index'))

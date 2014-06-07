@@ -1,5 +1,14 @@
 {% extends 'bootstrap/base.html' %}
 
+{% if repo is defined %}
+	{% if title is not defined %}
+		{% set title = repo.get_title() %}
+	{% endif %}
+	{% if content is not defined %}
+		{% set content = repo.get_content() %}
+	{% endif %}
+{% endif %}
+
 {% block styles %}
 	{{ super() }}
 	<link rel="stylesheet" href="{{ url_for('.static', filename='css/style.css') }}" />
@@ -35,7 +44,7 @@
 		</div>
 	</div>
 	{% block subnavbar %}
-		{% if repo_owner %}
+		{% if repo is defined and (repo.are_owner or repo.has_history) %}
 			<div class="navbar navbar-inverse navbar-fixed-top navbar-secondary" role="navigation">
 				<div class="container">
 					<div class="navbar-header">
@@ -49,9 +58,14 @@
 					<div class="collapse navbar-collapse">
 						<ul class="nav navbar-nav narbar-right">
 							{% block submenu %}
-							<li {% if active_page == 'view' %}class="active"{% endif %}><a href="{{ url_for('view', rid=rid) }}">View</a></li>
-							<li {% if active_page == 'edit' %}class="active"{% endif %}><a href="{{ url_for('edit', rid=rid) }}">Edit</a></li>
-							<li {% if active_page == 'delete' %}class="active"{% endif %}><a href="{{ url_for('delete', rid=rid) }}">Delete</a></li>
+								<li {% if active_page == 'view' %}class="active"{% endif %}><a href="{{ url_for('view', rid=repo.id) }}">View</a></li>
+								{% if repo is defined and repo.are_owner %}
+									<li {% if active_page == 'edit' %}class="active"{% endif %}><a href="{{ url_for('edit', rid=repo.id) }}">Edit</a></li>
+									<li {% if active_page == 'delete' %}class="active"{% endif %}><a href="{{ url_for('delete', rid=repo.id) }}">Delete</a></li>
+								{% endif %}
+								{% if repo is defined and repo.has_history %}
+									<li {% if active_page == 'history' %}class="active"{% endif %}><a href="{{ url_for('history', rid=repo.id) }}">History</a></li>
+								{% endif %}
 							{% endblock %}
 						</ul>
 					</div>
