@@ -38,8 +38,8 @@ OAUTH_PROVIDERS = {
         'scope': ['public_profile', 'email'],
     },
 }
-for name in OAUTH_PROVIDERS:
+for name in OAUTH_PROVIDERS.keys():
     if name not in settings.OAUTH_SECRETS:
         del OAUTH_PROVIDERS[name]
     else:
-        OAUTH_PROVIDERS[name] = dict(OAUTH_PROVIDERS.items() + settings.OAUTH_SECRETS.items())
+        OAUTH_PROVIDERS[name] = dict(OAUTH_PROVIDERS[name].items() + settings.OAUTH_SECRETS[name].items())

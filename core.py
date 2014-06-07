@@ -22,10 +22,10 @@ def new():
             return render_template('edit.html', new=True, languages=LANGUAGES, **request.form)
 
         # Get the next free ID.
-        rid = max([int(f) for f in os.listdir(settings.repodir)] + [0]) + 1
+        rid = max([int(f) for f in os.listdir(settings.REPODIR)] + [0]) + 1
 
         # Create a new repo.
-        directory = os.path.join(settings.repodir, str(rid))
+        directory = os.path.join(settings.REPODIR, str(rid))
         repo = Repo.init(directory)
         
         # Write the title to a file.
