@@ -56,7 +56,9 @@ def new():
         return redirect(url_for('view', rid=rid))
 
 def list():
-    return render_template('list.html')
+    ids = sorted([dirname for dirname in os.listdir(settings.REPODIR) if not dirname.endswith('.deleted')], key=int)
+    repos = [{'id': dirname, 'title': read_file(os.path.join(settings.REPODIR, dirname, 'title'))} for dirname in ids]
+    return render_template('list.html', repos=repos)
 
 @route_fetch_repo
 def view(rid, repo, rev='HEAD'):

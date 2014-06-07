@@ -4,3 +4,4 @@ repos/
 .*un~
 *.pyc
 settings.py
+log

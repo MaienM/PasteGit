@@ -1,3 +1,15 @@
 {% extends 'base.html' %}
 
 {% set active_page = 'list' %}
+
+{% set title = 'Pastes' %}
+
+{% block container %}
+	<ul class="list-group">
+		{% for repo in repos %}
+		<li class="list-group-item">
+			<a href="{{ url_for('view', rid=repo.id) }}">
+				{{ repo.title }}
+			</a>
+		{% endfor %}
+{% endblock %}

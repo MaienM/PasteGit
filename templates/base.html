@@ -25,7 +25,6 @@
 						{% endif %}
 						<li {% if active_page == 'list' %}class="active"{% endif %}><a href="/list">List Pastes</a></li>
 						{% if session.user %}
-							<li {% if active_page == 'new' %}class="active"{% endif %}><a href="/new">New Paste</a></li>
 							<li><a href="/logout">Logout</a></li>
 						{% else %}
 							<li><a href="/login">Login</a></li>
