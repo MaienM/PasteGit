@@ -3,3 +3,4 @@ repos/
 .*.sw[po]
 .*un~
 *.pyc
+settings.py

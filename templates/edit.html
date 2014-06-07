@@ -6,11 +6,17 @@
 	{% set active_page = 'edit' %}
 {% endif %}
 
-{% block innercontent %}
+{% block title %}
+	{% if new %}
+		New paste
+	{% else %}
+		Edit '{{ title|trim }}'
+	{% endif %}
+{% endblock %}
+
+{% block container %}
 	<form class="form-horizontal" method="post">
 		<fieldset>
-			<legend>{{ title }}</legend>
-
 			<!-- Title -->
 			{% if new %}
 				<div class="form-group">

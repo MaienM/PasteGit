@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% set title = 'PasteGit' %}
+
+{% block container %}
+	{% if session.user %}
+		Welcome {{ session.user.name }}. Please use the top links to get around.
+	{% else %}
+		Welcome new, mysterious person. Please, do tell me who you are.
+	{% endif %}
+{% endblock %}
