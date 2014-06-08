@@ -16,6 +16,14 @@ LANGUAGES = {
         'renderer': markdown.markdown,
     }
 }
+if settings.LANGUAGES_WHITELIST:
+    for key in LANGUAGES.keys():
+        if key not in settings.LANGUAGES_WHITELIST:
+            del LANGUAGES[key]
+if settings.LANGUAGES_BLACKLIST:
+    for key in LANGUAGES.keys():
+        if key in settings.LANGUAGES_WHITELIST:
+            del LANGUAGES[key]
 
 # OAuth providers.
 OAUTH_PROVIDERS = {

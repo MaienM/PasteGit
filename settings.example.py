@@ -5,6 +5,12 @@ REPODIR = 'repos'
 # See http://flask.pocoo.org/docs/quickstart/#sessions
 FLASK_SECRET_KEY = ''
 
+# Language whitelist. If you set this to a list of language names, only those will be available.
+LANGUAGES_WHITELIST = None
+
+# Language blacklist. If you set this to a list of language names, all except for those will be available.
+LANGUAGES_BLACKLIST = None
+
 # Provider secrets. If you don't want to use a certain provider, simply remove
 # it here.
 OAUTH_SECRETS = {
