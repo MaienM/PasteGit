@@ -9,6 +9,7 @@ from flask_bootstrap import Bootstrap
 
 import core
 import auth
+import helpers
 
 # Create the app.
 app = Flask(__name__)
@@ -23,11 +24,15 @@ app.route('/<rid>')(core.view)
 app.route('/<rid>/<rev>')(core.view)
 app.route('/<rid>/edit', methods=('GET', 'POST'))(core.edit)
 app.route('/<rid>/delete', methods=('GET', 'POST'))(core.delete)
+app.route('/<rid>/history')(core.history)
 
 app.route('/login')(auth.login)
 app.route('/logout')(auth.logout)
 app.route('/callback')(auth.callback)
 app.route('/test')(auth.test)
+
+# Bind the filters.
+app.template_filter('timedelta')(helpers.timedelta)
 
 # We don't have an SSL certificate yet.
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'

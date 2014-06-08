@@ -3,3 +3,4 @@ flask-bootstrap
 gitpython
 markdown
 requests-oauthlib
+babel

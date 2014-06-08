@@ -7,9 +7,11 @@
 {% block container %}
 	<ul class="list-group">
 		{% for repo in repos %}
-		<li class="list-group-item">
-			<a href="{{ url_for('view', rid=repo.id) }}">
-				{{ repo.title }}
-			</a>
+			<li class="list-group-item">
+				<a href="{{ url_for('view', rid=repo.id) }}">
+					{{ repo.title }}
+				</a>
+			</li>
 		{% endfor %}
+	</ul>
 {% endblock %}

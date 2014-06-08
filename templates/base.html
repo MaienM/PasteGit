@@ -11,7 +11,13 @@
 
 {% block styles %}
 	{{ super() }}
-	<link rel="stylesheet" href="{{ url_for('.static', filename='css/style.css') }}" />
+	<link rel="stylesheet" type="text/css" href="{{ url_for('.static', filename='css/jasny-bootstrap.min.css') }}" />
+	<link rel="stylesheet" type="text/css" href="{{ url_for('.static', filename='css/style.css') }}" />
+{% endblock %}
+
+{% block scripts %}
+	{{super()}}
+	<script src="{{url_for('.static', filename='js/jasny-bootstrap.min.js')}}" type="text/javascript"></script>
 {% endblock %}
 
 {% block navbar %}
@@ -44,7 +50,7 @@
 		</div>
 	</div>
 	{% block subnavbar %}
-		{% if repo is defined and (repo.are_owner or repo.has_history) %}
+		{% if repo is defined and (repo.are_owner or repo.commits|length > 1) %}
 			<div class="navbar navbar-inverse navbar-fixed-top navbar-secondary" role="navigation">
 				<div class="container">
 					<div class="navbar-header">
@@ -63,7 +69,7 @@
 									<li {% if active_page == 'edit' %}class="active"{% endif %}><a href="{{ url_for('edit', rid=repo.id) }}">Edit</a></li>
 									<li {% if active_page == 'delete' %}class="active"{% endif %}><a href="{{ url_for('delete', rid=repo.id) }}">Delete</a></li>
 								{% endif %}
-								{% if repo is defined and repo.has_history %}
+								{% if repo is defined and repo.commits|length > 1 %}
 									<li {% if active_page == 'history' %}class="active"{% endif %}><a href="{{ url_for('history', rid=repo.id) }}">History</a></li>
 								{% endif %}
 							{% endblock %}

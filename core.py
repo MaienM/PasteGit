@@ -25,7 +25,7 @@ def new():
             return render_template('edit.html', new=True, languages=LANGUAGES, **request.form)
 
         # Get the next free ID.
-        rid = max([int(f) for f in os.listdir(settings.REPODIR)] + [0]) + 1
+        rid = max([int(f.replace('.deleted', '')) for f in os.listdir(settings.REPODIR)] + [0]) + 1
 
         # Create a new repo.
         repo = PasteRepo.init(rid)
@@ -98,3 +98,7 @@ def delete(repo):
 
         # Go to the main page.
         return redirect(url_for('index'))
+
+@fetch_repo
+def history(repo):
+    return render_template('history.html', repo=repo)

@@ -1,6 +1,8 @@
 import os.path
 import functools
+import time
 
+import babel.dates
 from flask import render_template, session
 from git import Repo, NoSuchPathError
 
@@ -40,6 +42,10 @@ class PasteRepo(Repo):
                 if ext in lang['extensions']:
                     self.language = lang
                     break
+
+        # Get the commits.
+        self.commits = [self.commit('HEAD')]
+        self.commits += [commit for commit in self.commits[0].iter_parents()]
 
     def get_title(self, rev='HEAD'):
         """
@@ -100,3 +106,10 @@ def require_repo_owner(f):
         else:
             return render_template('error.html', error='You are not the owner of this paste')
     return wrapper
+
+def timedelta(ts):
+    """
+    Transform a timestamp into a time delta (8 minutes ago, etc).
+    This is a Jinja2 filter.
+    """
+    return babel.dates.format_timedelta(time.time() - ts)
