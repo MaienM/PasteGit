@@ -76,12 +76,12 @@ def edit(repo):
         return render_template('edit.html', repo=repo)
     else:
         # Check that all required fields are present.
-        if not set(('message', 'content')).issubset(set(request.form.keys())):
+        if not set(('title', 'message', 'content')).issubset(set(request.form.keys())):
             flash('Please fill in all fields', 'warning')
             return render_template('edit.html', repo=repo, **request.form)
 
         # Commit.
-        repo.update(request.form['message'], repo.get_title(), request.form['content'])
+        repo.update(request.form['message'], request.form['title'], request.form['content'])
 
         # View the paste.
         return redirect(url_for('view', rid=rid))
