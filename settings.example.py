@@ -1,9 +1,20 @@
 # The directory where repositories are stored.
-REPODIR = 'repos'
+REPODIR = '/absolute/path/to/repos'
 
 # The secret key of flask.
 # See http://flask.pocoo.org/docs/quickstart/#sessions
 FLASK_SECRET_KEY = ''
+
+# Whether to allow anonymous users/pastes.
+ANONYMOUS = False
+
+# Whether to allow anonymous users to edit anonymous pastes.
+# This means that ANYONE can edit a paste made by an anonymous user.
+ANONYMOUS_EDIT = False
+
+# The author of anonymous pastes.
+ANONYMOUS_USER = 'Anonymous'
+ANONYMOUS_EMAIL = 'anon@waxd.nl'
 
 # Language whitelist. If you set this to a list of language names, only those will be available.
 LANGUAGES_WHITELIST = None

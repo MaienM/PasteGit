@@ -16,6 +16,9 @@ app = Flask(__name__)
 app.secret_key = settings.FLASK_SECRET_KEY
 Bootstrap(app)
 
+# Bind special functions.
+app.before_request(auth.anonymous)
+
 # Bind the routes.
 app.route('/')(core.index)
 app.route('/new', methods=('GET', 'POST'))(core.new)

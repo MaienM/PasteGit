@@ -23,6 +23,7 @@ class PasteRepo(Repo):
         # Determine whether the currently logged in user is the owner.
         try:
             assert session['user']['email'] == self.config_reader('repository').get('user', 'email')
+            assert not session['user']['is_anon'] or settings.ANONYMOUS_EDIT
             self.are_owner = True
         except:
             self.are_owner = False

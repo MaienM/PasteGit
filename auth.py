@@ -1,10 +1,27 @@
 import urllib
 from requests_oauthlib import OAuth2Session
 
-from flask import request, session, redirect, url_for, render_template
+from flask import request, session, redirect, url_for, render_template, flash
 from flask.json import jsonify
 
+import settings
 from constants import OAUTH_PROVIDERS
+
+def anonymous():
+    """
+    If not logged in and ANONYMOUS is on, log in as anonymous.
+    If logged in as anonymous and ANONYMOUS is off, log out.
+    """
+    if settings.ANONYMOUS:
+        if 'user' not in session:
+            session['user'] = {
+                'email': 'test@example.com',
+                'name': 'Anonymous',
+                'is_anon': True,
+            }
+    else:
+        if 'user' in session and session['user']['is_anon']:
+            del session['user']
 
 def _p(key):
     """
@@ -13,14 +30,12 @@ def _p(key):
     return OAUTH_PROVIDERS[session['provider']][key]
 
 def login():
+    if 'user' in session and not session['user']['is_anon']:
+        flash("You're logged in already.", 'info')
+        return redirect(url_for('index'))
+
     if request.args.get('provider', '') in OAUTH_PROVIDERS:
         return login_perform()
-    elif request.args.get('provider', '') == 'test':
-        session['user'] = {
-            'email': 'test@example.com',
-            'name': 'Anonymous',
-        }
-        return redirect(url_for('index'))
     else:
         return login_pickprovider()
 
@@ -88,6 +103,7 @@ def get_user_data():
     session['user'] = {}
     session['user']['email'] = userdata['email']
     session['user']['name'] = userdata['name']
+    session['user']['is_anon'] = False
 
 def logout():
     for key in ('oauth_state', 'oauth_token', 'user'):
