@@ -64,16 +64,15 @@ def list():
     repos.sort(key=lambda x: x['id'])
     return render_template('list.html', repos=repos)
 
-@fetch_repo
-def view(repo, rev='HEAD'):
+@fetch_repo()
+def view(repo):
     content = repo.get_content()
     if 'renderer' in repo.language:
         content = repo.language['renderer'](content)
     
     return render_template('view/{}.html'.format(repo.language['view']), content=content, repo=repo)
 
-@fetch_repo
-@require_repo_owner
+@fetch_repo(require_owner=True)
 def edit(repo):
     if request.method == 'GET':
         return render_template('edit.html', repo=repo)
@@ -92,8 +91,7 @@ def edit(repo):
         # View the paste.
         return redirect(url_for('view', rid=rid))
 
-@fetch_repo
-@require_repo_owner
+@fetch_repo(require_owner=True)
 def delete(repo):
     if request.method == 'GET':
         return render_template('delete.html', repo=repo)
@@ -108,6 +106,6 @@ def delete(repo):
         # Go to the main page.
         return redirect(url_for('index'))
 
-@fetch_repo
+@fetch_repo()
 def history(repo):
     return render_template('history.html', repo=repo)

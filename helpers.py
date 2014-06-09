@@ -81,32 +81,31 @@ class PasteRepo(Repo):
         Repo.init(directory)
         return PasteRepo(rid)
 
-def fetch_repo(f):
+def fetch_repo(require_owner=False):
     """
     Wrapper for routes that will automatically grab the rid parameter and load
-    the repo associated with it. If this fails, it will render the error template.
-    """
-    @functools.wraps(f)
-    def wrapper(rid, *args, **kwargs):
-        try:
-            repo = PasteRepo(rid)
-        except NoSuchPathError:
-            return render_template('error.html', error='That paste does not exist')
-        return f(repo=repo, *args, **kwargs)
-    return wrapper
+    the repo associated with it. If this fails an error message is displayed.
 
-def require_repo_owner(f):
+    Additionally, you can require the repo to be owned by the current user.
     """
-    Require the current user to be the owner of the repo. If this is not the
-    case, the error template will be rendered.
-    """
-    @functools.wraps(f)
-    def wrapper(repo, *args, **kwargs):
-        if repo.are_owner:
+    def decorator(f):
+        @functools.wraps(f)
+        def wrapper(rid, rev='HEAD', *args, **kwargs):
+            # Get the repo.
+            try:
+                repo = PasteRepo(rid)
+            except NoSuchPathError:
+                flash('That paste does not exist', 'danger')
+                return redirect(url_for('index'))
+    
+            # Require owner.
+            if require_owner and not repo.are_owner:
+                flash('You are not the owner of this paste', 'danger')
+                return redirect(url_for('view', rid=repo.id, rev=repo.rev.hexsha))
+
             return f(repo=repo, *args, **kwargs)
-        else:
-            return render_template('error.html', error='You are not the owner of this paste')
-    return wrapper
+        return wrapper
+    return decorator
 
 def timedelta(ts):
     """
