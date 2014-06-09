@@ -113,3 +113,9 @@ def timedelta(ts):
     This is a Jinja2 filter.
     """
     return babel.dates.format_timedelta(time.time() - ts)
+
+def active_if(bool):
+    """
+    Returns class="active" if the check evaluates to true.
+    """
+    return bool and 'class=active' or ''

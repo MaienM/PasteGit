@@ -34,8 +34,9 @@ app.route('/logout')(auth.logout)
 app.route('/callback')(auth.callback)
 app.route('/test')(auth.test)
 
-# Bind the filters.
+# Bind extras for the templates. 
 app.template_filter('timedelta')(helpers.timedelta)
+app.context_processor(lambda *x: {'active_if': helpers.active_if})
 
 # We don't have an SSL certificate yet.
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'

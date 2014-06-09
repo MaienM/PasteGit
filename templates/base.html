@@ -37,9 +37,9 @@
 				<ul class="nav navbar-nav navbar-right">
 					{% block menu %}
 						{% if session.user %}
-						<li {% if active_page == 'new' %}class="active"{% endif %}><a href="{{ url_for('new') }}">New Paste</a></li>
+						<li {{ active_if(active_page == 'new') }}><a href="{{ url_for('new') }}">New Paste</a></li>
 						{% endif %}
-						<li {% if active_page == 'list' %}class="active"{% endif %}><a href="{{ url_for('list') }}">List Pastes</a></li>
+						<li {{ active_if(active_page == 'list') }}><a href="{{ url_for('list') }}">List Pastes</a></li>
 						{% if session.user is defined and not session.user.is_anon %}
 							<li><a href="{{ url_for('logout') }}">Logout</a></li>
 						{% else %}
@@ -64,13 +64,13 @@
 				<div class="collapse navbar-collapse">
 					<ul class="nav navbar-nav narbar-right">
 						{% block submenu %}
-							<li {% if active_page == 'view' %}class="active"{% endif %}><a href="{{ url_for('view', rid=repo.id) }}">View</a></li>
+							<li {{ active_if(active_page == 'view') }}><a href="{{ url_for('view', rid=repo.id, rev=repo.rev.hexsha) }}">View</a></li>
 							{% if repo is defined and repo.are_owner %}
-								<li {% if active_page == 'edit' %}class="active"{% endif %}><a href="{{ url_for('edit', rid=repo.id) }}">Edit</a></li>
-								<li {% if active_page == 'delete' %}class="active"{% endif %}><a href="{{ url_for('delete', rid=repo.id) }}">Delete</a></li>
+								<li {{ active_if(active_page == 'edit') }}><a href="{{ url_for('edit', rid=repo.id) }}">Edit</a></li>
+								<li {{ active_if(active_page == 'delete') }}><a href="{{ url_for('delete', rid=repo.id) }}">Delete</a></li>
 							{% endif %}
 							{% if repo is defined and repo.commits|length > 1 %}
-								<li {% if active_page == 'history' %}class="active"{% endif %}><a href="{{ url_for('history', rid=repo.id) }}">History</a></li>
+								<li {{ active_if(active_page == 'history') }}><a href="{{ url_for('history', rid=repo.id, rev=repo.rev.hexsha) }}">History</a></li>
 							{% endif %}
 						{% endblock %}
 					</ul>
