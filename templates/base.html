@@ -31,19 +31,19 @@
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 				</button>
-				<a class="navbar-brand" href="#">PasteGit</a>
+				<a class="navbar-brand" href="{{ url_for('index') }}">PasteGit</a>
 			</div>
 			<div class="collapse navbar-collapse">
 				<ul class="nav navbar-nav navbar-right">
 					{% block menu %}
 						{% if session.user %}
-							<li {% if active_page == 'new' %}class="active"{% endif %}><a href="/new">New Paste</a></li>
+						<li {% if active_page == 'new' %}class="active"{% endif %}><a href="{{ url_for('new') }}">New Paste</a></li>
 						{% endif %}
-						<li {% if active_page == 'list' %}class="active"{% endif %}><a href="/list">List Pastes</a></li>
+						<li {% if active_page == 'list' %}class="active"{% endif %}><a href="{{ url_for('list') }}">List Pastes</a></li>
 						{% if session.user is defined and not session.user.is_anon %}
-							<li><a href="/logout">Logout</a></li>
+							<li><a href="{{ url_for('logout') }}">Logout</a></li>
 						{% else %}
-							<li><a href="/login">Login</a></li>
+							<li><a href="{{ url_for('login') }}">Login</a></li>
 						{% endif %}
 					{% endblock %}
 				</ul>
