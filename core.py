@@ -41,6 +41,9 @@ def new():
 
         # Commit.
         repo.update(request.form['message'], request.form['title'], request.form['content'])
+
+        # Message.
+        flash('Paste created', 'success')
         
         # View the paste.
         return redirect(url_for('view', rid=rid))
@@ -83,6 +86,9 @@ def edit(repo):
         # Commit.
         repo.update(request.form['message'], request.form['title'], request.form['content'])
 
+        # Message.
+        flash('Paste updated', 'success')
+
         # View the paste.
         return redirect(url_for('view', rid=rid))
 
@@ -95,6 +101,9 @@ def delete(repo):
         # Rename the directory.
         directory = repo.working_dir
         os.rename(directory, directory.rstrip('/\\') + '.deleted')
+
+        # Message.
+        flash('Paste deleted', 'success')
 
         # Go to the main page.
         return redirect(url_for('index'))

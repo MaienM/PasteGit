@@ -88,6 +88,9 @@ def callback():
     # Get the user data.
     get_user_data()
 
+    # Message.
+    flash('You are now logged in', 'success')
+
     # Go back to the index page.
     return redirect(url_for('index'))
 
@@ -106,9 +109,14 @@ def get_user_data():
     session['user']['is_anon'] = False
 
 def logout():
+    # Delete all auth-related stuff from the session.
     for key in ('oauth_state', 'oauth_token', 'user'):
         if key in session:
             del session[key]
+
+    # Message.
+    flash('You are now logged out', 'success')
+    
     return redirect(url_for('index'))
 
 def test():
