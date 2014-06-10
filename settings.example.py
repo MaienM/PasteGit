@@ -1,6 +1,9 @@
 # The directory where repositories are stored.
 REPO_DIR = '/absolute/path/to/repos'
 
+# The amount of repositories per page.
+REPO_PER_PAGE = 10
+
 # The secret key of flask.
 # See http://flask.pocoo.org/docs/quickstart/#sessions
 FLASK_SECRET_KEY = ''

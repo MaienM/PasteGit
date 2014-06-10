@@ -27,9 +27,19 @@ class PasteRepo(Repo):
             else:
                 raise
 
+        # Determine the owner.
+        if self.rev:
+            cr = self.config_reader('repository')
+            self.owner = {
+                'email': cr.get('user', 'email'),
+                'name': cr.get('user', 'name'),
+            }
+        else:
+            self.owner = None
+
         # Determine whether the currently logged in user is the owner.
         try:
-            assert session['user']['email'] == self.config_reader('repository').get('user', 'email')
+            assert session['user']['email'] == self.owner['email']
             assert not session['user']['is_anon'] or settings.ANONYMOUS_EDIT
             self.are_owner = True
         except:
@@ -124,8 +134,25 @@ def timedelta(ts):
     """
     return babel.dates.format_timedelta(time.time() - ts)
 
-def active_if(bool):
+def pagination_range(page, page_count):
     """
-    Returns class="active" if the check evaluates to true.
+    Determine which pages to show links for for pagination.
+    This is a Jinja2 filter.
     """
-    return bool and 'class=active' or ''
+    # Get the default set.
+    pages = [1, 2, page - 2, page - 1, page, page + 1, page + 2, page_count - 1, page_count]
+
+    # Filter out pages that are out of range.
+    pages = [p for p in pages if p > 0 and p <= page_count]
+
+    # Make sure everything is an int.
+    pages = [int(p) for p in pages]
+
+    # Remove duplicates.
+    pages = set(pages)
+
+    # Sort.
+    pages = sorted(pages)
+
+    return pages
+

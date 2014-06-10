@@ -2,6 +2,7 @@
 
 import os
 import settings
+import math
 
 from flask import render_template, request, redirect, url_for, flash, session
 from git import Repo
@@ -48,21 +49,19 @@ def new():
         # View the paste.
         return redirect(url_for('view', rid=rid))
 
-def list():
-    repos = []
-    for dirname in os.listdir(settings.REPO_DIR):
-        if dirname.endswith('.deleted'):
-            continue
-        try:
-            with open(os.path.join(settings.REPO_DIR, dirname, 'title'), 'r') as f:
-                repos.append({
-                    'id': int(dirname),
-                    'title': f.read(),
-                })
-        except:
-            pass
-    repos.sort(key=lambda x: x['id'])
-    return render_template('list.html', repos=repos)
+def list(page=1):
+    # Get a list of all directory names.
+    dirnames = [int(dirname) for dirname in os.listdir(settings.REPO_DIR) if not dirname.endswith('.deleted')]
+    dirnames.sort()
+
+    # Determine the number of pages.
+    pages = math.ceil(len(dirnames) / settings.REPO_PER_PAGE)
+
+    # Get the current page.
+    dirnames = dirnames[settings.REPO_PER_PAGE * (page - 1):settings.REPO_PER_PAGE * page]
+    repos = [PasteRepo(dirname) for dirname in dirnames]
+
+    return render_template('list.html', repos=repos, page=page, pages=pages)
 
 @fetch_repo()
 def view(repo):

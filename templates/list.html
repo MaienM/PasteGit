@@ -5,13 +5,47 @@
 {% set title = 'Pastes' %}
 
 {% block container %}
-	<ul class="list-group">
-		{% for repo in repos %}
-			<li class="list-group-item">
-				<a href="{{ url_for('view', rid=repo.id) }}">
-					{{ repo.title }}
-				</a>
-			</li>
+	<table class="table table-striped table-hover rowlink" data-link="row">
+		<thead>
+			<tr>
+				<th>
+					Title
+				</th>
+				<th>
+					Author
+				</th>
+				<th>
+					Language
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for repo in repos %}
+				<tr>
+					<td>
+						<a href="{{ url_for('view', rid=repo.id) }}">repo.get_title()</a>
+					</td>
+					<td>
+						{{ repo.owner.name }}
+					</td>
+					<td>
+						{{ repo.language.name }}
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+	{% if pages > 1 %}
+		Pages: 
+		{% set comma = joiner(',') %}
+		{% for p in page|pagination_range(pages) -%}
+			{{ comma() }}
+			{% if p == page -%}
+				{{ p }}
+			{%- else -%}
+				<a href="{{ url_for('list', page=p) }}">p</a>
+			{%- endif -%}
 		{% endfor %}
-	</ul>
+	{% endif %}
 {% endblock %}

@@ -24,6 +24,7 @@ app.before_request(auth.anonymous)
 app.route('/')(core.index)
 app.route('/new', methods=('GET', 'POST'))(core.new)
 app.route('/list')(core.list)
+app.route('/list/<int:page>')(core.list)
 app.route('/<rid>')(core.view)
 app.route('/<rid>/<rev>')(core.view)
 app.route('/<rid>/edit', methods=('GET', 'POST'))(core.edit)
@@ -38,7 +39,7 @@ app.route('/test')(auth.test)
 
 # Bind extras for the templates. 
 app.template_filter('timedelta')(helpers.timedelta)
-app.context_processor(lambda *x: {'active_if': helpers.active_if})
+app.template_filter('pagination_range')(helpers.pagination_range)
 
 # We don't have an SSL certificate yet.
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
