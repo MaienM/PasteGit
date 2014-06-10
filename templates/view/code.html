@@ -1,3 +1,16 @@
 {% extends 'view.html' %}
 
+{% block styles %}
+	{{ super() }}
+	<link rel="stylesheet" type="text/css" href="{{ url_for('.static', filename='bower_components/google-code-prettify/src/prettify.css') }}" media="screen "/>
+{% endblock %}
 
+{% block scripts %}
+	{{super()}}
+	<script src="{{url_for('.static', filename='bower_components/google-code-prettify/src/prettify.js')}}" type="text/javascript"></script>
+	<script>prettyPrint();</script>
+{% endblock %}
+
+{% block container %}
+	<pre class="prettyprint">{{ content }}</pre>
+{% endblock %}
