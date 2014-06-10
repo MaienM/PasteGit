@@ -1,7 +1,6 @@
 /* Navbar spacing */
 body {
 	padding-top: 64px;
-	padding-bottom: 30px;
 }
 
 #subnav-spacer {
@@ -28,4 +27,18 @@ body {
 /* Active table rows */
 tr.active, td.active, tr.active td {
 	background-color: #f2dede !important;
+}
+
+/* Footer positioning */
+html, body {
+	height: 100%;
+}
+body > .container { 
+	min-height: 100%;
+	padding-bottom: 50px;
+}
+#footer {
+	height: 50px;
+	margin-top: -50px;
+	clear: both;
 }

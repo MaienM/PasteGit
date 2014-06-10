@@ -8,6 +8,7 @@ from flask import Flask
 
 import core
 import auth
+import extra
 import helpers
 
 # Create the app.
@@ -15,6 +16,8 @@ app = Flask(__name__)
 app.secret_key = settings.FLASK_SECRET_KEY
 
 # Bind special functions.
+app.before_request(extra.timer_start)
+app.after_request(extra.timer_end)
 app.before_request(auth.anonymous)
 
 # Bind the routes.
