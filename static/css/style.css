@@ -1,8 +1,14 @@
+/* Navbar spacing */
 body {
-	padding-top: 70px;
+	padding-top: 64px;
 	padding-bottom: 30px;
 }
 
+#subnav-spacer {
+	height: 50px;
+}
+
+/* Navbar styling */
 .navbar-primary {
 }
 
@@ -12,12 +18,14 @@ body {
 	border-color: #282828;
 }
 
-#subnav-spacer {
-	height: 50px;
-}
-
+/* Page title */
 .page-header {
-	margin-top: -20px;
+	margin-top: -6px;
 	padding-bottom: 0;
 	border-bottom: 1px solid #BBB;
+}
+
+/* Active table rows */
+tr.active, td.active, tr.active td {
+	background-color: #f2dede !important;
 }
