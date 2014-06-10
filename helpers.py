@@ -4,7 +4,7 @@ import time
 
 import babel.dates
 from flask import render_template, session
-from git import Repo, NoSuchPathError
+from git import Repo, NoSuchPathError, BadObject
 
 from constants import LANGUAGES
 import settings
@@ -19,7 +19,13 @@ class PasteRepo(Repo):
 
         # Store the repo id.
         self.id = rid
-        self.rev = self.commit(rev)
+        try:
+            self.rev = self.commit(rev)
+        except BadObject:
+            if rev == 'HEAD':
+                self.rev = None
+            else:
+                raise
 
         # Determine whether the currently logged in user is the owner.
         try:
@@ -46,8 +52,11 @@ class PasteRepo(Repo):
                     break
 
         # Get the commits.
-        self.commits = [self.commit('HEAD')]
-        self.commits += [commit for commit in self.commits[0].iter_parents()]
+        if self.rev:
+            self.commits = [self.commit('HEAD')]
+            self.commits += [commit for commit in self.commits[0].iter_parents()]
+        else:
+            self.commits = []
 
     def get_title(self):
         """
