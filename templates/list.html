@@ -23,7 +23,7 @@
 			{% for repo in repos %}
 				<tr>
 					<td>
-						<a href="{{ url_for('view', rid=repo.id) }}">repo.get_title()</a>
+						{{ macros.link_to(repo.get_title(), 'view', rid=repo.id) }}
 					</td>
 					<td>
 						{{ repo.owner.name }}
@@ -44,7 +44,7 @@
 			{% if p == page -%}
 				{{ p }}
 			{%- else -%}
-				<a href="{{ url_for('list', page=p) }}">p</a>
+				{{ macros.link_to(p, 'list', page=p) }}
 			{%- endif -%}
 		{% endfor %}
 	{% endif %}

@@ -6,7 +6,7 @@
 	{{ super() }}
 	{% if repo.rev != repo.head.commit %}
 		<div class="alert alert-info">
-			You're viewing an older revision of this paste. View the <a href="{{ url_for('view', rid=repo.id) }}">current revision</a>.
+			You're viewing an older revision of this paste. View the {{ macros.link_to('current revision', 'view', rid=repo.id) }}.
 		</div>
 	{% endif %}
 {% endblock %}

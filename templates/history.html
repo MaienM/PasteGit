@@ -20,11 +20,9 @@
 		</thead>
 		<tbody>
 			{% for commit in repo.commits %}
-				<tr {{ active_if(repo.rev == commit) }}>
+				<tr {{ macros.active_if(repo.rev == commit) }}>
 					<td>
-						<a href="{{ url_for('view', rid=repo.id, rev=commit.hexsha) }}">
-							{{ commit.summary }}
-						</a>
+						{{ macros.link_to(commit.summary, 'view', rid=repo.id, rev=commit.hexsha) }}
 					</td>
 					<td>
 						{{ commit.committed_date|timedelta }} 
