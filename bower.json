@@ -1,0 +1,24 @@
+{
+    "name": "pastegit",
+    "description": "Git-powered pastebin with (optional) login, editable pastes and paste history.",
+    "authors": [
+        "MaienM <michon1992@gmail.com>"
+    ],
+    "main": "main.py",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/MaienM/PasteGit.git"
+    },
+    "private": true,
+    "ignore": [
+        "**/.*",
+        "bower_components",
+        "repos"
+    ],
+    "dependencies": {
+        "jquery": "~2.1.1",
+        "bootstrap": "~3.1.1",
+        "bootstrap-jasny": "~3.1.3"
+    }
+}

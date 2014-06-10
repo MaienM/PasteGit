@@ -1,4 +1,4 @@
-{% extends 'bootstrap/base.html' %}
+{% extends 'bootstrap.html' %}
 
 {# If title and/or content are not specifically defined, auto-load them from the repo object. #}
 {% if repo is defined %}
@@ -12,13 +12,13 @@
 
 {% block styles %}
 	{{ super() }}
-	<link rel="stylesheet" type="text/css" href="{{ url_for('.static', filename='css/jasny-bootstrap.min.css') }}" />
-	<link rel="stylesheet" type="text/css" href="{{ url_for('.static', filename='css/style.css') }}" />
+	<link rel="stylesheet" type="text/css" href="{{ url_for('.static', filename='bower_components/bootstrap-jasny/dist/css/jasny-bootstrap.min.css') }}" media="screen "/>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('.static', filename='css/style.css') }}" media="screen" />
 {% endblock %}
 
 {% block scripts %}
 	{{super()}}
-	<script src="{{url_for('.static', filename='js/jasny-bootstrap.min.js')}}" type="text/javascript"></script>
+	<script src="{{url_for('.static', filename='bower_components/bootstrap-jasny/dist/js/jasny-bootstrap.min.js')}}" type="text/javascript"></script>
 {% endblock %}
 
 {% block navbar %}

@@ -5,3 +5,4 @@ repos/
 *.pyc
 settings.py
 log
+static/bower_components
