@@ -20,7 +20,7 @@
 		</thead>
 		<tbody>
 			{% for commit in repo.commits %}
-				<tr>
+				<tr {{ active_if(repo.rev == commit) }}>
 					<td>
 						<a href="{{ url_for('view', rid=repo.id, rev=commit.hexsha) }}">
 							{{ commit.summary }}
@@ -32,5 +32,5 @@
 				</tr>
 			{% endfor %}
 		</tbody>
-	</ul>
+	</table>
 {% endblock %}

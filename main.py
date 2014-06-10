@@ -28,6 +28,7 @@ app.route('/<rid>/<rev>')(core.view)
 app.route('/<rid>/edit', methods=('GET', 'POST'))(core.edit)
 app.route('/<rid>/delete', methods=('GET', 'POST'))(core.delete)
 app.route('/<rid>/history')(core.history)
+app.route('/<rid>/history/<rev>')(core.history)
 
 app.route('/login')(auth.login)
 app.route('/logout')(auth.logout)

@@ -14,11 +14,12 @@ class PasteRepo(Repo):
     A subclass of Repo with some extra helper methods and properties.
     """
 
-    def __init__(self, rid):
+    def __init__(self, rid, rev='HEAD'):
         Repo.__init__(self, os.path.join(settings.REPODIR, str(rid)))
 
         # Store the repo id.
         self.id = rid
+        self.rev = self.commit(rev)
 
         # Determine whether the currently logged in user is the owner.
         try:
@@ -48,17 +49,17 @@ class PasteRepo(Repo):
         self.commits = [self.commit('HEAD')]
         self.commits += [commit for commit in self.commits[0].iter_parents()]
 
-    def get_title(self, rev='HEAD'):
+    def get_title(self):
         """
         Get the title of the main file from the given revision.
         """
-        return self.commit(rev).tree['title'].data_stream.read()
+        return self.rev.tree['title'].data_stream.read()
 
-    def get_content(self, rev='HEAD'):
+    def get_content(self):
         """
         Get the content of the main file from the given revision.
         """
-        return self.commit(rev).tree[self.mainfile].data_stream.read()
+        return self.rev.tree[self.mainfile].data_stream.read()
 
     def update(self, message, title, content):
         """
@@ -93,7 +94,7 @@ def fetch_repo(require_owner=False):
         def wrapper(rid, rev='HEAD', *args, **kwargs):
             # Get the repo.
             try:
-                repo = PasteRepo(rid)
+                repo = PasteRepo(rid, rev=rev)
             except NoSuchPathError:
                 flash('That paste does not exist', 'danger')
                 return redirect(url_for('index'))
