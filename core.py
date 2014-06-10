@@ -25,7 +25,7 @@ def new():
             return render_template('edit.html', new=True, languages=LANGUAGES, **request.form)
 
         # Get the next free ID.
-        rid = max([int(f.replace('.deleted', '')) for f in os.listdir(settings.REPODIR)] + [0]) + 1
+        rid = max([int(f.replace('.deleted', '')) for f in os.listdir(settings.REPO_DIR)] + [0]) + 1
 
         # Create a new repo.
         repo = PasteRepo.init(rid)
@@ -50,11 +50,11 @@ def new():
 
 def list():
     repos = []
-    for dirname in os.listdir(settings.REPODIR):
+    for dirname in os.listdir(settings.REPO_DIR):
         if dirname.endswith('.deleted'):
             continue
         try:
-            with open(os.path.join(settings.REPODIR, dirname, 'title'), 'r') as f:
+            with open(os.path.join(settings.REPO_DIR, dirname, 'title'), 'r') as f:
                 repos.append({
                     'id': int(dirname),
                     'title': f.read(),

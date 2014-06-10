@@ -15,7 +15,7 @@ class PasteRepo(Repo):
     """
 
     def __init__(self, rid, rev='HEAD'):
-        Repo.__init__(self, os.path.join(settings.REPODIR, str(rid)))
+        Repo.__init__(self, os.path.join(settings.REPO_DIR, str(rid)))
 
         # Store the repo id.
         self.id = rid
@@ -87,7 +87,7 @@ class PasteRepo(Repo):
         """
         Initialize a new repository.
         """
-        directory = os.path.join(settings.REPODIR, str(rid))
+        directory = os.path.join(settings.REPO_DIR, str(rid))
         Repo.init(directory)
         return PasteRepo(rid)
 

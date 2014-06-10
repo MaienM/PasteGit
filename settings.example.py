@@ -1,5 +1,5 @@
 # The directory where repositories are stored.
-REPODIR = '/absolute/path/to/repos'
+REPO_DIR = '/absolute/path/to/repos'
 
 # The secret key of flask.
 # See http://flask.pocoo.org/docs/quickstart/#sessions
