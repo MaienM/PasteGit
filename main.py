@@ -41,13 +41,14 @@ app.route('/test')(auth.test)
 app.template_filter('timedelta')(helpers.timedelta)
 app.template_filter('pagination_range')(helpers.pagination_range)
 
-# We don't have an SSL certificate yet.
-os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
-
 # Logging.
 handler = logging.FileHandler('/var/www/pastegit/log')
 handler.setLevel(logging.WARNING)
 app.logger.addHandler(handler)
+
+# Apply certain settings.
+if settings.ALLOW_INSECURE_AUTH:
+    os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 # Run with the built-in server if ran directly.
 if __name__ == '__main__':

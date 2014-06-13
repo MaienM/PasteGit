@@ -1,3 +1,6 @@
+# If you don't have an SSL certificate, set this to true.
+ALLOW_INSECURE_AUTH = False
+
 # The directory where repositories are stored.
 REPO_DIR = '/absolute/path/to/repos'
 
