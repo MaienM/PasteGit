@@ -4,7 +4,7 @@ import os
 import settings
 import math
 
-from flask import render_template, request, redirect, url_for, flash, session
+from flask import render_template, request, redirect, url_for, flash, session, g
 from git import Repo
 
 from constants import LANGUAGES
@@ -14,7 +14,7 @@ def index():
     return render_template('index.html')
 
 def new():
-    if 'user' not in session:
+    if not g.user.can_create():
         return render_template('error', error='You need to be logged in to do that.')
 
     if request.method == 'GET':

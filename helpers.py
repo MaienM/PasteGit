@@ -37,14 +37,6 @@ class PasteRepo(Repo):
         else:
             self.owner = None
 
-        # Determine whether the currently logged in user is the owner.
-        try:
-            assert session['user']['email'] == self.owner['email']
-            assert not session['user']['is_anon'] or settings.ANONYMOUS_EDIT
-            self.are_owner = True
-        except:
-            self.are_owner = False
-
         # Determine what the main file is.
         self.mainfile = None
         self.files = [entry[0] for entry in self.index.entries.keys()]
@@ -67,6 +59,7 @@ class PasteRepo(Repo):
             self.commits += [commit for commit in self.commits[0].iter_parents()]
         else:
             self.commits = []
+        self.has_history = len(self.commits) > 1
 
     def get_title(self):
         """
@@ -126,7 +119,7 @@ def fetch_repo(require_owner=False):
                 return redirect(url_for('index'))
     
             # Require owner.
-            if require_owner and not repo.are_owner:
+            if require_owner and not g.user.is_owner(repo):
                 flash('You are not the owner of this paste', 'danger')
                 return redirect(url_for('view', rid=repo.id, rev=repo.rev.hexsha))
 

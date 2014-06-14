@@ -18,7 +18,7 @@ app.secret_key = settings.FLASK_SECRET_KEY
 # Bind special functions.
 app.before_request(extra.timer_start)
 app.after_request(extra.timer_end)
-app.before_request(auth.anonymous)
+app.before_request(auth.provide_user)
 
 # Bind the routes.
 app.route('/')(core.index)

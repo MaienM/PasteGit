@@ -1,27 +1,101 @@
 import urllib
 
 from requests_oauthlib import OAuth2Session
-from flask import request, session, redirect, url_for as uf, render_template, flash
+from flask import request, session, redirect, url_for as uf, render_template, flash, g
 from flask.json import jsonify
 
 import settings
 from constants import OAUTH_PROVIDERS
 
-def anonymous():
+class User(object):
     """
-    If not logged in and ANONYMOUS is on, log in as anonymous.
-    If logged in as anonymous and ANONYMOUS is off, log out.
+    An user.
+
+    Can be an anonymous user, or can be a logged in user.
     """
-    if settings.ANONYMOUS:
-        if 'user' not in session:
-            session['user'] = {
-                'email': 'test@example.com',
-                'name': 'Anonymous',
-                'is_anon': True,
-            }
-    else:
-        if 'user' in session and session['user']['is_anon']:
+
+    def __init__(self):
+        """
+        Create a new user object.
+
+        If there is user data in the Flask session this will be used.
+        """
+        if 'user' in session:
+            self.login(session['user']['email'], session['user']['name'])
+        else:
+            self.logout()
+
+    def login(self, email, name):
+        """
+        Login the user.
+        """
+        self.email = email
+        self.name = name
+        self._is_anon = False
+        self._is_admin = email in settings.ADMINS
+        session['user'] = {k: v for k, v in self.__dict__.items() if not k.startswith('_')}
+
+    def logout(self):
+        """
+        Logout the user.
+        """
+        self.email = settings.ANONYMOUS_EMAIL
+        self.name = settings.ANONYMOUS_NAME
+        self._is_anon = True
+        self._is_admin = False
+        if 'user' in session:
             del session['user']
+
+    def save(self):
+        """
+        Save the current user data in the session.
+        """
+
+    def is_anon(self):
+        """
+        Whether the user is an anonymous user.
+        """
+        return self._is_anon
+
+    def is_admin(self):
+        """
+        Whether the user is an admin.
+        """
+        return self._is_admin
+    
+    def is_owner(self, repo):
+        """
+        Whether the user is owner of the repo.
+        """
+        try:
+            assert self.email == repo.owner['email']
+            return True
+        except:
+            return False
+
+    def can_create(self):
+        """
+        Whether the user can create a new repo.
+        """
+        return not self.is_anon() or settings.ANONYMOUS_CREATE
+
+    def can_edit(self, repo):
+        """
+        Whether the user can edit the repo.
+        """
+        return self.is_admin() or (self.is_owner(repo) and (not self.is_anon() or settings.ANONYMOUS_EDIT))
+
+    def can_delete(self, repo):
+        """
+        Whether the user can delete the repo.
+        """
+        return self.is_admin() or (self.is_owner(repo) and (not self.is_anon() or settings.ANONYMOUS_DELETE))
+
+def provide_user():
+    """
+    Get the user from the session, and insert it into all jinja templates.
+    """
+    g.user = User()
 
 def provider_prop(key):
     """
@@ -53,7 +127,7 @@ def url_for(*args, **kwargs):
     return uf(*args, **kwargs).replace('127.0.0.1:5000', 'pastegit.waxd.nl')
 
 def login():
-    if 'user' in session and not session['user']['is_anon']:
+    if not g.user.is_anon():
         flash("You're logged in already.", 'info')
         return redirect(url_for('index'))
 
@@ -125,17 +199,14 @@ def get_user_data():
     """
     provider = OAuth2Session(provider_prop('client_id'), token=session['oauth_token'])
     userdata = provider.get(provider_prop('profile_uri')).json()
-    print(userdata)
-    session['user'] = {}
-    session['user']['email'] = userdata['email']
-    session['user']['name'] = userdata['name']
-    session['user']['is_anon'] = False
+    g.user.login(userdata['email'], userdata['name'])
 
 def logout():
     # Delete all auth-related stuff from the session.
-    for key in ('oauth_state', 'oauth_token', 'user'):
+    for key in ('oauth_state', 'oauth_token'):
         if key in session:
             del session[key]
+    g.user.logout()
 
     # Message.
     flash('You are now logged out', 'success')
