@@ -101,6 +101,13 @@ class PasteRepo(Repo):
         Repo.init(directory)
         return PasteRepo(rid)
 
+class MicroMock(object):
+    """
+    A very simple mock class.
+    """
+    def __init__(self, **kwargs):
+        self.__dict__.update(kwargs)
+
 def fetch_repo(require_owner=False):
     """
     Wrapper for routes that will automatically grab the rid parameter and load

@@ -1,7 +1,7 @@
 import urllib
-from requests_oauthlib import OAuth2Session
 
-from flask import request, session, redirect, url_for, render_template, flash
+from requests_oauthlib import OAuth2Session
+from flask import request, session, redirect, url_for as uf, render_template, flash
 from flask.json import jsonify
 
 import settings
@@ -23,11 +23,34 @@ def anonymous():
         if 'user' in session and session['user']['is_anon']:
             del session['user']
 
-def _p(key):
+def provider_prop(key):
     """
     Get a property of the chosen provider.
     """
     return OAUTH_PROVIDERS[session['provider']][key]
+
+def create_provider(*args, **kwargs):
+    """
+    Create an Oauth2Session.
+    """
+    # Create the base provider.
+    provider = OAuth2Session(provider_prop('client_id'), 
+                             *args,
+                             redirect_uri=url_for('callback', _external=True),
+                             state='oauth_state' in session and session['oauth_state'] or None,
+                             **kwargs)
+
+    # Register compliance hooks, if needed.
+    try:
+        for name, hook in provider_prop('compliance_hooks').items():
+            provider.register_compliance_hook(name, hook)
+    except KeyError:
+        pass
+
+    return provider
+
+def url_for(*args, **kwargs):
+    return uf(*args, **kwargs).replace('127.0.0.1:5000', 'pastegit.waxd.nl')
 
 def login():
     if 'user' in session and not session['user']['is_anon']:
@@ -35,17 +58,17 @@ def login():
         return redirect(url_for('index'))
 
     if request.args.get('provider', '') in OAUTH_PROVIDERS:
-        return login_perform()
+        return _login_perform()
     else:
-        return login_pickprovider()
+        return _login_pickprovider()
 
-def login_pickprovider():
+def _login_pickprovider():
     """
     Step 0: Selecting a provider.
     """
     return render_template('login.html', providers=OAUTH_PROVIDERS)
 
-def login_perform():
+def _login_perform():
     """
     Step 1: User Authorization.
  
@@ -57,10 +80,8 @@ def login_perform():
     session['provider'] = request.args.get('provider', '')
 
     # Build the request.
-    provider = OAuth2Session(_p('client_id'), 
-                             redirect_uri=url_for('callback', _external=True),
-                             scope=_p('scope'))
-    authorization_url, state = provider.authorization_url(_p('auth_uri'))
+    provider = create_provider(scope=provider_prop('scope'))
+    authorization_url, state = provider.authorization_url(provider_prop('auth_uri'))
  
     # State is used to prevent CSRF, keep this for later.
     session['oauth_state'] = state
@@ -77,9 +98,10 @@ def callback():
     in the redirect URL. We will use that to obtain an access token.
     """
  
-    provider = OAuth2Session(_p('client_id'), state=session['oauth_state'])
-    token = provider.fetch_token(_p('token_uri'), 
-                                 client_secret=_p('client_secret'),
+    # Get the token.
+    provider = create_provider()
+    token = provider.fetch_token(provider_prop('token_uri'), 
+                                 client_secret=provider_prop('client_secret'),
                                  authorization_response=request.url)
  
     # Store the token for later use.
@@ -101,8 +123,9 @@ def get_user_data():
     Now that we're authenticated with our provider of choice, we can fetch the
     user data. We only need a few fields, and we discard the rest.
     """
-    provider = OAuth2Session(_p('client_id'), token=session['oauth_token'])
-    userdata = provider.get(_p('profile_uri')).json()
+    provider = OAuth2Session(provider_prop('client_id'), token=session['oauth_token'])
+    userdata = provider.get(provider_prop('profile_uri')).json()
+    print(userdata)
     session['user'] = {}
     session['user']['email'] = userdata['email']
     session['user']['name'] = userdata['name']
@@ -120,5 +143,5 @@ def logout():
     return redirect(url_for('index'))
 
 def test():
-    provider = OAuth2Session(_p('client_id'), token=session['oauth_token'])
-    return jsonify(provider.get(_p('profile_uri')).json())
+    provider = OAuth2Session(provider_prop('client_id'), token=session['oauth_token'])
+    return jsonify(provider.get(provider_prop('profile_uri')).json())

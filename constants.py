@@ -1,3 +1,6 @@
+import json
+import urlparse
+
 import markdown
 
 import settings
@@ -16,6 +19,8 @@ LANGUAGES = {
         'renderer': markdown.markdown,
     }
 }
+
+# Filter out unwanted languages based on the settings file.
 if settings.LANGUAGES_WHITELIST:
     for key in LANGUAGES.keys():
         if key not in settings.LANGUAGES_WHITELIST:
@@ -24,6 +29,21 @@ if settings.LANGUAGES_BLACKLIST:
     for key in LANGUAGES.keys():
         if key in settings.LANGUAGES_WHITELIST:
             del LANGUAGES[key]
+
+# Hacks for broken implementations.
+def fb_access_token_response(r):
+    """
+    A fix for facebook. 
+
+    For some reason facebook doesn't return JSON for the access_token page,
+    even though the spec says they should. A spec which they co-author. Right.
+    """
+    from helpers import MicroMock
+    values = urlparse.parse_qs(r.text)
+    values = dict([(k, v[0]) for k, v in values.items()])
+    values['token_type'] = 'bearer'
+    fr = MicroMock(text=json.dumps(values))
+    return fr
 
 # OAuth providers.
 OAUTH_PROVIDERS = {
@@ -42,10 +62,15 @@ OAUTH_PROVIDERS = {
     'facebook': {
         'auth_uri': 'https://www.facebook.com/dialog/oauth',
         'token_uri': 'https://graph.facebook.com/oauth/access_token',
-        'profile_uri': 'https://graph.facebook.com/user/me',
+        'profile_uri': 'https://graph.facebook.com/me',
         'scope': ['public_profile', 'email'],
+        'compliance_hooks': {
+            'access_token_response': fb_access_token_response,
+        },
     },
 }
+
+# Read client secrets from the settings file.
 for name in OAUTH_PROVIDERS.keys():
     if name not in settings.OAUTH_SECRETS:
         del OAUTH_PROVIDERS[name]
