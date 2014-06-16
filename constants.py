@@ -53,12 +53,6 @@ OAUTH_PROVIDERS = {
         'profile_uri': 'https://www.googleapis.com/oauth2/v1/userinfo',
         'scope': ['https://www.googleapis.com/auth/userinfo.email'],
     },
-    'github': {
-        'auth_uri': 'https://github.com/login/oauth/authorize',
-        'token_uri': 'https://github.com/login/oauth/access_token',
-        'profile_uri': 'https://api.github.com/user',
-        'scope': ['user.email'],
-    },
     'facebook': {
         'auth_uri': 'https://www.facebook.com/dialog/oauth',
         'token_uri': 'https://graph.facebook.com/oauth/access_token',

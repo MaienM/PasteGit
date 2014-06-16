@@ -44,12 +44,6 @@ OAUTH_SECRETS = {
         'client_secret': '',
     },
 
-    # See https://github.com/settings/applications
-    'github': {
-        'client_id': '',
-        'client_secret': '',
-    },
-
     # See https://developers.facebook.com/apps
     'facebook': {
         'client_id': '',
