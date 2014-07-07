@@ -3,7 +3,7 @@ import functools
 import time
 
 import babel.dates
-from flask import render_template, session
+from flask import render_template, session, flash, redirect, url_for, g
 from git import Repo, NoSuchPathError, BadObject
 
 from constants import LANGUAGES
@@ -65,12 +65,16 @@ class PasteRepo(Repo):
         """
         Get the title of the main file from the given revision.
         """
+        if not self.rev:
+            raise Exception('Trying to get the title of a broken repo. Please fix or remove repo {}'.format(self.id))
         return self.rev.tree['title'].data_stream.read()
 
     def get_content(self):
         """
         Get the content of the main file from the given revision.
         """
+        if not self.rev:
+            raise Exception('Trying to get the content of a broken repo. Please fix or remove repo {}'.format(self.id))
         return self.rev.tree[self.mainfile].data_stream.read()
 
     def update(self, message, title, content):
@@ -101,7 +105,7 @@ class MicroMock(object):
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
 
-def fetch_repo(require_owner=False):
+def fetch_repo(action='view'):
     """
     Wrapper for routes that will automatically grab the rid parameter and load
     the repo associated with it. If this fails an error message is displayed.
@@ -118,9 +122,12 @@ def fetch_repo(require_owner=False):
                 flash('That paste does not exist', 'danger')
                 return redirect(url_for('index'))
     
-            # Require owner.
-            if require_owner and not g.user.is_owner(repo):
-                flash('You are not the owner of this paste', 'danger')
+            # Check permission.
+            if action == 'edit' and not g.user.can_edit(repo):
+                flash('You are not allowed to edit this paste', 'danger')
+                return redirect(url_for('view', rid=repo.id, rev=repo.rev.hexsha))
+            elif action == 'delete' and not g.user.can_delete(repo):
+                flash('You are not allowed to delete this paste', 'danger')
                 return redirect(url_for('view', rid=repo.id, rev=repo.rev.hexsha))
 
             return f(repo=repo, *args, **kwargs)

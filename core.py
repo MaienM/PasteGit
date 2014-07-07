@@ -1,11 +1,8 @@
-#!/usr/bin/python
-
 import os
 import settings
 import math
 
 from flask import render_template, request, redirect, url_for, flash, session, g
-from git import Repo
 
 from constants import LANGUAGES
 from helpers import *
@@ -36,8 +33,8 @@ def new():
         # Set owner.
         cw = repo.config_writer('repository')
         cw.add_section('user')
-        cw.set('user', 'name', session['user']['name'])
-        cw.set('user', 'email', session['user']['email'])
+        cw.set('user', 'name', g.user.name)
+        cw.set('user', 'email', g.user.email)
         cw.write()
 
         # Commit.
@@ -47,7 +44,7 @@ def new():
         flash('Paste created', 'success')
         
         # View the paste.
-        return redirect(url_for('view', rid=rid))
+        return redirect(url_for('view', rid=repo.id))
 
 def list(page=1):
     # Get a list of all directory names.
@@ -71,7 +68,7 @@ def view(repo):
     
     return render_template('view/{}.html'.format(repo.language['view']), content=content, repo=repo)
 
-@fetch_repo(require_owner=True)
+@fetch_repo(action='edit')
 def edit(repo):
     if request.method == 'GET':
         return render_template('edit.html', repo=repo)
@@ -88,9 +85,9 @@ def edit(repo):
         flash('Paste updated', 'success')
 
         # View the paste.
-        return redirect(url_for('view', rid=rid))
+        return redirect(url_for('view', rid=repo.id))
 
-@fetch_repo(require_owner=True)
+@fetch_repo(action='delete')
 def delete(repo):
     if request.method == 'GET':
         return render_template('delete.html', repo=repo)
