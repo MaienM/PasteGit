@@ -16,7 +16,6 @@ LANGUAGES = {
         'name': 'Markdown',
         'extensions': ('.md', '.markdown'),
         'view': 'markdown',
-        'renderer': markdown.markdown,
     }
 }
 
