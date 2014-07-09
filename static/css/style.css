@@ -14,7 +14,7 @@ body {
 }
 
 .navbar-secondary + .container {
-	padding-top: 50px;
+	margin-top: 50px;
 }
 
 /* Page title */
@@ -36,6 +36,7 @@ html, body {
 body > .container { 
 	min-height: 100%;
 	padding-bottom: 76px;
+	position: relative;
 }
 #footer {
 	height: 60px;
@@ -44,4 +45,14 @@ body > .container {
 	clear: both;
 
 	background-color: #F5F5F5;
+}
+
+/* Table of contents */
+#toc {
+	position: absolute;
+	top: 20px;
+	right: -100px;
+}
+#toc > ul {
+	position: fixed;
 }
