@@ -84,7 +84,7 @@
 	{% endif %}
 {% endblock %}
 
-{% block content %}
+{% block container %}
 	<div class="container" role="main">
 		{% block messages %}
 			{% with messages = get_flashed_messages(with_categories=true) %}
@@ -102,7 +102,7 @@
 			</h1>
 		</div>
 		
-		{% block container %}{% endblock %}
+		{% block content %}{% endblock %}
 	</div>
 {% endblock %}
 

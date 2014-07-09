@@ -13,7 +13,7 @@
 	<script src="{{ url_for('.static', filename='js/toc.js') }}" type="text/javascript"></script>
 {% endblock %}
 
-{% block container %}
+{% block content %}
 	<div id="markdown" class="markdown hidden">{{ content|safe }}</div>
 	<div id="toc" class="bs-docs-sidebar col-xs-1 toc">
 		<ul class="nav nav-stacked fixed">

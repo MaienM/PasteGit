@@ -2,7 +2,7 @@
 
 {% set title = 'Please pick a provider' %}
 
-{% block container %}
+{% block content %}
     {% for provider in providers %}
         <a href="{{ url_for('login', provider=provider) }}">
             <img src="{{ url_for('.static', filename='images/providers/' + provider + '.png') }}" />
