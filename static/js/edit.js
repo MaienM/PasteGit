@@ -1,3 +1,13 @@
+// From http://stackoverflow.com/a/7124052
+function htmlEscape(str) {
+    return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+}
+
 $(function() {
 	// Init the editor.
 	var editor = new EpicEditor({
@@ -14,7 +24,7 @@ $(function() {
 	editor.reflow('height');
 
 	// Save/load.
-	editor.importFile($('#content').val());
+	editor.importFile('epiceditor', htmlEscape($('#content').val()));
 	$('#submit').click(function() {
 		$('#content').val(editor.exportFile());
 	});
