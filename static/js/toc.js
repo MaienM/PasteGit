@@ -50,12 +50,4 @@ $(function() {
 		target: '#toc',
 		offset: 125,
 	});
-
-	// TOC links.
-	$('#toc a').click(function(e) {
-		$('html, body').animate({
-			scrollTop: $($(this).attr('href')).offset().top - 120,
-		}, 800);
-		e.preventDefault();
-	});
 });
