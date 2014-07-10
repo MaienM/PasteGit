@@ -8,6 +8,14 @@ def format_timedelta(ts):
     """
     return babel.dates.format_timedelta(time.time() - ts)
 
+def format_number(number, _format, **kwargs):
+    """
+    Format a number, with optional keywords and plural formatting.
+    """
+    if number == 1 and 'plural' in kwargs:
+        kwargs['plural'] = ''
+    return _format.format(number=number, **kwargs)
+
 def pagination_range(page, page_count):
     """
     Determine which pages to show links for for pagination.
@@ -30,4 +38,4 @@ def pagination_range(page, page_count):
 
     return pages
 
-FILTERS = (format_timedelta, pagination_range)
+FILTERS = (format_timedelta, format_number, pagination_range)
