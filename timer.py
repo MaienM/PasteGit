@@ -3,13 +3,13 @@ import time
 from flask import request
 from werkzeug.wsgi import ClosingIterator
 
-def timer_start():
+def start():
     """
     Start the timing of the request time.
     """
     request.start = time.time()
 
-def timer_end(response):
+def end(response):
     """
     End the timing of the request time, and insert the time into the page result.
     """

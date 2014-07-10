@@ -5,7 +5,7 @@ import math
 from flask import render_template, request, redirect, url_for, flash, session, g
 
 from constants import LANGUAGES
-from helpers import *
+from pasterepo import PasteRepo
 
 def index():
     return render_template('index.html')
@@ -60,7 +60,7 @@ def list(page=1):
 
     return render_template('list.html', repos=repos, page=page, pages=pages)
 
-@fetch_repo()
+@PasteRepo.fetch()
 def view(repo):
     content = repo.get_content()
     if 'renderer' in repo.language:
@@ -68,7 +68,7 @@ def view(repo):
     
     return render_template('view/{}.html'.format(repo.language['view']), content=content, repo=repo)
 
-@fetch_repo(action='edit')
+@PasteRepo.fetch('edit')
 def edit(repo):
     if request.method == 'GET':
         return render_template('edit.html', repo=repo)
@@ -87,7 +87,7 @@ def edit(repo):
         # View the paste.
         return redirect(url_for('view', rid=repo.id))
 
-@fetch_repo(action='delete')
+@PasteRepo.fetch('delete')
 def delete(repo):
     if request.method == 'GET':
         return render_template('delete.html', repo=repo)
@@ -102,6 +102,6 @@ def delete(repo):
         # Go to the main page.
         return redirect(url_for('index'))
 
-@fetch_repo()
+@PasteRepo.fetch()
 def history(repo):
     return render_template('history.html', repo=repo)

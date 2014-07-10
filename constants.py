@@ -1,9 +1,8 @@
 import json
 import urlparse
 
-import markdown
-
 import settings
+from fixes import fb_access_token_response
 
 # Languages in which pastes can be made.
 LANGUAGES = {
@@ -29,20 +28,6 @@ if settings.LANGUAGES_BLACKLIST:
         if key in settings.LANGUAGES_WHITELIST:
             del LANGUAGES[key]
 
-# Hacks for broken implementations.
-def fb_access_token_response(r):
-    """
-    A fix for facebook. 
-
-    For some reason facebook doesn't return JSON for the access_token page,
-    even though the spec says they should. A spec which they co-author. Right.
-    """
-    from helpers import MicroMock
-    values = urlparse.parse_qs(r.text)
-    values = dict([(k, v[0]) for k, v in values.items()])
-    values['token_type'] = 'bearer'
-    fr = MicroMock(text=json.dumps(values))
-    return fr
 
 # OAuth providers.
 OAUTH_PROVIDERS = {

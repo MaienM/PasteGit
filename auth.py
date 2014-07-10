@@ -212,7 +212,3 @@ def logout():
     flash('You are now logged out', 'success')
     
     return redirect(url_for('index'))
-
-def test():
-    provider = OAuth2Session(provider_prop('client_id'), token=session['oauth_token'])
-    return jsonify(provider.get(provider_prop('profile_uri')).json())

@@ -1,8 +1,6 @@
 import os.path
 import functools
-import time
 
-import babel.dates
 from flask import render_template, session, flash, redirect, url_for, g
 from git import Repo, NoSuchPathError, BadObject
 
@@ -98,68 +96,35 @@ class PasteRepo(Repo):
         Repo.init(directory)
         return PasteRepo(rid)
 
-class MicroMock(object):
-    """
-    A very simple mock class.
-    """
-    def __init__(self, **kwargs):
-        self.__dict__.update(kwargs)
+    @staticmethod
+    def fetch(action='view'):
+        """
+        Wrapper for routes that will automatically grab the rid parameter and load
+        the repo associated with it. If this fails an error message is displayed.
 
-def fetch_repo(action='view'):
-    """
-    Wrapper for routes that will automatically grab the rid parameter and load
-    the repo associated with it. If this fails an error message is displayed.
+        Additionally, you can require the repo to be owned by the current user.
+        """
+        if action not in ('view', 'edit', 'delete'):
+            raise AttributeException('{} is not a recognized action.'.format(action))
 
-    Additionally, you can require the repo to be owned by the current user.
-    """
-    def decorator(f):
-        @functools.wraps(f)
-        def wrapper(rid, rev='HEAD', *args, **kwargs):
-            # Get the repo.
-            try:
-                repo = PasteRepo(rid, rev=rev)
-            except NoSuchPathError:
-                flash('That paste does not exist', 'danger')
-                return redirect(url_for('index'))
-    
-            # Check permission.
-            if action == 'edit' and not g.user.can_edit(repo):
-                flash('You are not allowed to edit this paste', 'danger')
-                return redirect(url_for('view', rid=repo.id, rev=repo.rev.hexsha))
-            elif action == 'delete' and not g.user.can_delete(repo):
-                flash('You are not allowed to delete this paste', 'danger')
-                return redirect(url_for('view', rid=repo.id, rev=repo.rev.hexsha))
+        def decorator(f):
+            @functools.wraps(f)
+            def wrapper(rid, rev='HEAD', *args, **kwargs):
+                # Get the repo.
+                try:
+                    repo = PasteRepo(rid, rev=rev)
+                except NoSuchPathError:
+                    flash('That paste does not exist', 'danger')
+                    return redirect(url_for('index'))
+        
+                # Check permission.
+                if action == 'edit' and not g.user.can_edit(repo):
+                    flash('You are not allowed to edit this paste', 'danger')
+                    return redirect(url_for('view', rid=repo.id, rev=repo.rev.hexsha))
+                elif action == 'delete' and not g.user.can_delete(repo):
+                    flash('You are not allowed to delete this paste', 'danger')
+                    return redirect(url_for('view', rid=repo.id, rev=repo.rev.hexsha))
 
-            return f(repo=repo, *args, **kwargs)
-        return wrapper
-    return decorator
-
-def timedelta(ts):
-    """
-    Transform a timestamp into a time delta (8 minutes ago, etc).
-    This is a Jinja2 filter.
-    """
-    return babel.dates.format_timedelta(time.time() - ts)
-
-def pagination_range(page, page_count):
-    """
-    Determine which pages to show links for for pagination.
-    This is a Jinja2 filter.
-    """
-    # Get the default set.
-    pages = [1, 2, page - 2, page - 1, page, page + 1, page + 2, page_count - 1, page_count]
-
-    # Filter out pages that are out of range.
-    pages = [p for p in pages if p > 0 and p <= page_count]
-
-    # Make sure everything is an int.
-    pages = [int(p) for p in pages]
-
-    # Remove duplicates.
-    pages = set(pages)
-
-    # Sort.
-    pages = sorted(pages)
-
-    return pages
-
+                return f(repo=repo, *args, **kwargs)
+            return wrapper
+        return decorator

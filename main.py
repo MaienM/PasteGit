@@ -8,17 +8,21 @@ from flask import Flask
 
 import core
 import auth
-import extra
-import helpers
+import timer
+import filters
 
 # Create the app.
 app = Flask(__name__)
 app.secret_key = settings.FLASK_SECRET_KEY
 
 # Bind special functions.
-app.before_request(extra.timer_start)
-app.after_request(extra.timer_end)
+app.before_request(timer.start)
+app.after_request(timer.end)
 app.before_request(auth.provide_user)
+
+# Bind filters for the templates. 
+for _filter in filters.FILTERS:
+    app.template_filter(_filter.__name__)(_filter)
 
 # Bind the routes.
 app.route('/')(core.index)
@@ -35,11 +39,6 @@ app.route('/<rid>/history/<rev>')(core.history)
 app.route('/login')(auth.login)
 app.route('/logout')(auth.logout)
 app.route('/callback')(auth.callback)
-app.route('/test')(auth.test)
-
-# Bind extras for the templates. 
-app.template_filter('timedelta')(helpers.timedelta)
-app.template_filter('pagination_range')(helpers.pagination_range)
 
 # Logging.
 handler = logging.FileHandler('/var/www/pastegit/log')
