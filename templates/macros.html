@@ -1,9 +1,9 @@
 {# Mark something as active when a certain condition is met #}
-{% macro active_if(condition) %}
+{% macro active_if(condition) -%}
 	{% if condition %}
 		class="active" 
 	{% endif %}
-{% endmacro %}
+{%- endmacro %}
 
 {# Create a link to a page #}
 {% macro link_to(text, page, class='') -%}
@@ -11,8 +11,11 @@
 {%- endmacro %}
 
 {# Create a menu item #}
-{% macro menu_for(text, page) %}
+{% macro menu_for(text, icon, page) -%}
 	<li {{ active_if(active_page == page) }}>
-		{{ link_to(text, page, **kwargs) }}
+		<a href="{{ url_for(page, **kwargs) }}">
+			<span class="glyphicon glyphicon-{{ icon }}"></span> 
+			{{ text }}
+		</a>
 	</li>
-{% endmacro %}
+{%- endmacro %}
