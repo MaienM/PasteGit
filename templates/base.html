@@ -76,6 +76,9 @@
 							{% if repo.has_history %}
 								{{ macros.menu_for('History', 'calendar', 'history', rid=repo.id, rev=repo.rev.hexsha) }}
 							{% endif %}
+							{% if repo.has_releases %}
+								{{ macros.menu_for('Releases', 'tag', 'releases', rid=repo.id, rev=repo.rev.hexsha) }}
+							{% endif %}
 						{% endblock %}
 					</ul>
 				</div>

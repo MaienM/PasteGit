@@ -59,6 +59,15 @@ class PasteRepo(Repo):
             self.commits = []
         self.has_history = len(self.commits) > 1
 
+        # Get the tags.
+        self.has_releases = len(self.tags) > 0
+        self.revtag = None
+        if self.rev:
+            for tag in self.tags:
+                if tag.commit == self.rev:
+                    self.revtag = tag
+                    break
+
     def get_title(self):
         """
         Get the title of the main file from the given revision.

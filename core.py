@@ -105,3 +105,26 @@ def delete(repo):
 @PasteRepo.fetch()
 def history(repo):
     return render_template('history.html', repo=repo)
+
+@PasteRepo.fetch()
+def releases(repo):
+    if request.method == 'GET':
+        return render_template('releases.html', repo=repo)
+    else:
+        newtag = request.form['value']
+
+        # Check whether the tag is free.
+        for tag in repo.tags:
+            if tag.name == newtag and tag.commit != repo.rev:
+                return 'That tag is already in use', 409
+
+        # If a tag is given, set it.
+        if newtag:
+            repo.create_tag(newtag, ref=repo.rev.hexsha)
+            if repo.revtag:
+                repo.delete_tag(repo.revtag.name)
+            return 'Tag set'
+        else:
+            if repo.revtag:
+                repo.delete_tag(repo.revtag.name)
+            return 'Tag removed'

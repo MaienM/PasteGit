@@ -25,6 +25,11 @@ body {
 	padding-bottom: 0;
 	border-bottom: 1px solid #BBB;
 }
+.tag-container {
+	float: right;
+	margin-top: 1em;
+	font-size: 11pt;
+}
 
 /* Active table rows */
 tr.active, td.active, tr.active td {

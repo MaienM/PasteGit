@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% set active_page = 'history' %}
+
+{% block title %}
+	History of '{{ title }}'
+{% endblock %}
+
+{% block content %}
+	<table class="table table-striped table-hover rowlink" data-link="row">
+		<thead>
+			<tr>
+				<th>
+					Version
+				</th>
+				<th>
+					Age
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for tag in repo.tags|reverse %}
+				<tr {{ macros.active_if(repo.rev == tag.commit) }}>
+					<td>
+						{{ macros.link_to(tag.name, 'view', rid=repo.id, rev=tag.commit.hexsha) }}
+					</td>
+					<td>
+						{{ tag.commit.committed_date|format_timedelta }} 
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+{% endblock %}
