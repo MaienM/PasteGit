@@ -2,13 +2,21 @@
 
 PasteGit is a git-based pastebin.
 
-All pastes are stored in git repositories, which has serveral advantages: 
+All pastes are stored in git repositories, which means you can easily change many things (content, history, releases) manually, since it's just a git repo with a few files in it.
 
-- It doesn't use a database.
-- You can easily change pastes manually, since they are just files.
+Authentication is done through OAuth. By default it supports Google and Facebook, but it's trivial to add more providers.
 
-Pastes can be edited and deleted by the original creator. Since we don't use a database, we use oauth to authenticate users.
+Because of this it's completely database-less, so all you need is a webserver than can run python.
 
-## Setup
+If you're good with git you can also do things such as rewrite history much easier and in a more flexible and powerfull manner than with a database-driven solution.
 
-You will need to copy settings.example.py to settings.py, and you will need to change some settings. The comments inside this file should explain this.
+It's very flexible, see the settings.example.py file for a list of settings and an explanation about what they do.
+
+## Installation
+
+    git clone https://github.com/MaienM/PasteGit.git 
+	cd PasteGit
+	bower install
+	cp settings.example.py settings.py
+
+Then just edit settings.py to your liking, and enjoy!
