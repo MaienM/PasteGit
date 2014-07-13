@@ -111,6 +111,10 @@ def releases(repo):
     if request.method == 'GET':
         return render_template('releases.html', repo=repo)
     else:
+        # Check permission.
+        if not g.user.can_edit(repo):
+            return 'You are not allowed to edit this paste', 403
+
         newtag = request.form['value']
 
         # Check whether the tag is free.

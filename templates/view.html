@@ -16,8 +16,8 @@
 {% block title %}
 	{{ super() }}
 	<span class="tag-container">
-		<span id="tag" class="editable" data-type="text" data-emptytext="Untagged" data-url="{{ url_for('releases', rid=repo.id, rev=repo.rev.hexsha) }}" data-send="always" data-mode="pupup" data-placement="left">
-			{{ repo.revtag.name }}
+		<span id="tag" {% if g.user.can_edit(repo) %} class="editable" {% endif %} data-type="text" data-emptytext="Untagged" data-url="{{ url_for('releases', rid=repo.id, rev=repo.rev.hexsha) }}" data-send="always" data-mode="pupup" data-placement="left">
+			{{ repo.revtag.name or 'Untagged' }}
 		</span>
 		<span class="glyphicon glyphicon-tag"></span>
 	</span>
