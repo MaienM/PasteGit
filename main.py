@@ -1,15 +1,14 @@
 #!/usr/bin/python
 
 import os
-import settings
-import logging
 
 from flask import Flask
 
-import core
-import auth
-import timer
-import filters
+from pastegit import core
+from pastegit import auth
+from pastegit import timer
+from pastegit import filters
+import settings
 
 # Create the app.
 app = Flask(__name__)
@@ -41,11 +40,6 @@ app.route('/<rid>/releases/<rev>', methods=('GET', 'POST'))(core.releases)
 app.route('/login')(auth.login)
 app.route('/logout')(auth.logout)
 app.route('/callback')(auth.callback)
-
-# Logging.
-handler = logging.FileHandler('/var/www/pastegit/log')
-handler.setLevel(logging.WARNING)
-app.logger.addHandler(handler)
 
 # Apply certain settings.
 if settings.ALLOW_INSECURE_AUTH:
