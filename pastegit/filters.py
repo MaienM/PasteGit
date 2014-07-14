@@ -22,19 +22,13 @@ def pagination_range(page, page_count):
     This is a Jinja2 filter.
     """
     # Get the default set.
-    pages = [1, 2, page - 2, page - 1, page, page + 1, page + 2, page_count - 1, page_count]
+    pages = [page - 2, page - 1, page, page + 1, page + 2]
 
     # Filter out pages that are out of range.
     pages = [p for p in pages if p > 0 and p <= page_count]
 
     # Make sure everything is an int.
     pages = [int(p) for p in pages]
-
-    # Remove duplicates.
-    pages = set(pages)
-
-    # Sort.
-    pages = sorted(pages)
 
     return pages
 

@@ -41,15 +41,18 @@
 	</table>
 
 	{% if pages > 1 %}
-		Pages: 
-		{% set comma = joiner(',') %}
-		{% for p in page|pagination_range(pages) -%}
-			{{ comma() }}
-			{% if p == page -%}
-				{{ p }}
-			{%- else -%}
-				{{ macros.link_to(p, 'list', page=p) }}
-			{%- endif -%}
-		{% endfor %}
+		<ul class="pagination">
+			<li>
+				{{ macros.link_to('&laquo;'|safe, 'list', page=1) }}
+			</li>
+			{% for p in page|pagination_range(pages) -%}
+				<li {{ macros.active_if(p == page) }}>
+					{{ macros.link_to(p, 'list', page=p) }}
+				</li>
+			{% endfor %}
+			<li>
+				{{ macros.link_to('&raquo;'|safe, 'list', page=pages) }}
+			</li>
+		</ul>
 	{% endif %}
 {% endblock %}
