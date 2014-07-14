@@ -22,7 +22,7 @@
 			{% for tag in repo.tags|reverse %}
 				<tr {{ macros.active_if(repo.rev == tag.commit) }}>
 					<td>
-						{{ macros.link_to(tag.name, 'view', rid=repo.id, rev=tag.commit.hexsha) }}
+						{{ macros.link_to(tag.name, 'view', rid=repo.id, rev=tag.name) }}
 					</td>
 					<td>
 						{{ tag.commit.committed_date|format_timedelta }} 
