@@ -10,9 +10,4 @@ $(function() {
 	
 	// Editable elements.
 	$('.editable').editable();
-
-	// Editable tag.
-	$('.tag-container span:not(#tag)').click(function() {
-		$('#tag').click();
-	})
 });
