@@ -12,7 +12,7 @@
 
 {# Create a menu item #}
 {% macro menu_for(text, icon, page) -%}
-	<li {{ active_if(active_page == page) }}>
+	<li {{ active_if(request.endpoint == page) }}>
 		<a href="{{ url_for(page, **kwargs) }}">
 			<span class="glyphicon glyphicon-{{ icon }}"></span> 
 			{{ text }}

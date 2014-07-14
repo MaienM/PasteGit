@@ -1,11 +1,5 @@
 {% extends 'base.html' %}
 
-{% if new %}
-	{% set active_page = 'new' %}
-{% else %}
-	{% set active_page = 'edit' %}
-{% endif %}
-
 {% block title %}
 	{% if new %}
 		New paste
