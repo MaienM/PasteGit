@@ -51,5 +51,5 @@ body > .container {
 	right: -100px;
 }
 #toc > ul {
-	position: fixed;
+	top: 20px;
 }
