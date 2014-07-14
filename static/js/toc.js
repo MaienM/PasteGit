@@ -48,6 +48,6 @@ $(function() {
 	// TOC scrollspy.
 	$('body').scrollspy({
 		target: '#toc',
-		offset: 125,
+		offset: 15,
 	});
 });
