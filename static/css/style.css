@@ -1,9 +1,9 @@
 /* Navbar styling */
 .navbar-primary {
 	z-index: 2;
-	margin-bottom: 0;
 }
 .navbar-secondary {
+	margin-top: -20px;
 	background-color: #444;
 	border-color: #282828;
 	z-index: 1;
