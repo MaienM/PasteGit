@@ -88,13 +88,28 @@ class PasteRepo(Repo):
         """
         Update the repo with a new version.
         """
+        # Write the files.
         with open(os.path.join(self.working_dir, 'title'), 'w') as f:
             f.write(title)
         with open(os.path.join(self.working_dir, self.mainfile), 'w') as f:
             f.write(content)
+
+        # Update the index.
         self.index.add(['title', self.mainfile])
         self.index.write()
+
+        # Store the current user env var. 
+        # See https://github.com/gitpython-developers/gitpython/issues/39.
+        user = os.environ.get('USER', None)
+        os.environ['USER'] = 'None'
+
+        # Commit.
         self.index.commit(message)
+
+        # Restore the user env var.
+        del os.environ['USER']
+        if user:
+            os.environ['USER'] = user
 
     @staticmethod
     def init(rid):
